@@ -1,0 +1,54 @@
+{
+	"name": "gold_dim_establecimiento",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_segip",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "establecimiento_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "establecimiento_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "fuente",
+				"type": "varchar"
+			},
+			{
+				"name": "codigo_snis",
+				"type": "varchar"
+			},
+			{
+				"name": "nombre",
+				"type": "varchar"
+			},
+			{
+				"name": "municipio",
+				"type": "varchar"
+			},
+			{
+				"name": "departamento",
+				"type": "varchar"
+			},
+			{
+				"name": "nivel_atencion",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_establecimiento"
+		}
+	}
+}

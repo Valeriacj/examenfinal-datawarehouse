@@ -1,0 +1,33 @@
+{
+	"name": "gold_dim_programa",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_segip",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "programa_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "codigo_programa",
+				"type": "varchar"
+			},
+			{
+				"name": "nombre_programa",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_programa"
+		}
+	}
+}

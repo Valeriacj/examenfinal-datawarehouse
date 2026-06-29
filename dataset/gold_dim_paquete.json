@@ -1,0 +1,50 @@
+{
+	"name": "gold_dim_paquete",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_segip",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "paquete_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "paquete_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "nombre",
+				"type": "varchar"
+			},
+			{
+				"name": "contenido",
+				"type": "varchar"
+			},
+			{
+				"name": "peso_estandar_kg",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "costo_estimado_bs",
+				"type": "decimal",
+				"precision": 18,
+				"scale": 2
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_paquete"
+		}
+	}
+}

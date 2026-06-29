@@ -1,0 +1,29 @@
+{
+	"name": "gold_dim_estado",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_segip",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "estado_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "estado",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_estado"
+		}
+	}
+}
