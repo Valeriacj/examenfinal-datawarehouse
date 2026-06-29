@@ -48,8 +48,6 @@
 				"     query: 'SELECT\\n    TRIM(control_pediatrico_id) AS control_pediatrico_id,\\n    TRIM(ci_nino) AS ci_nino,\\n    TRIM(ci_madre) AS ci_madre,\\n    TRIM(establecimiento_id) AS establecimiento_id,\\n    TRIM(nro_control) AS nro_control,\\n    TRIM(fecha_control) AS fecha_control,\\n    TRIM(peso_nino_kg) AS peso_nino_kg,\\n    TRIM(talla_nino_cm) AS talla_nino_cm,\\n    TRIM(vacuna_aplicada) AS vacuna_aplicada,\\n    TRIM(resultado) AS resultado\\nFROM bronze.bja_controles_pediatricos\\nWHERE control_pediatrico_id IS NOT NULL\\nAND TRIM(control_pediatrico_id) <> \\'\\'\\nAND TRIM(control_pediatrico_id) <> \\'NULL\\'',",
 				"     format: 'query') ~> source1",
 				"source1 derive(control_pediatrico_id = toInteger(control_pediatrico_id),",
-				"          ci_nino = trim(ci_nino),",
-				"          ci_madre = trim(ci_madre),",
 				"          establecimiento_id = toInteger(establecimiento_id),",
 				"          nro_control = toInteger(nro_control),",
 				"          fecha_control = coalesce(\r",
