@@ -6,11 +6,87 @@
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
-			"sinks": [],
-			"transformations": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "bronze_bja_establecimientos_salud",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "silver_bja_establecimientos_salud",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				}
+			],
 			"scriptLines": [
-				""
+				"source(output(",
+				"          establecimiento_id as string,",
+				"          codigo_snis as string,",
+				"          nombre as string,",
+				"          tipo as string,",
+				"          nivel_atencion as string,",
+				"          municipio as string,",
+				"          departamento as string,",
+				"          red_salud as string,",
+				"          estado as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT\\r\\n    TRIM(establecimiento_id) AS establecimiento_id,\\r\\n    TRIM(codigo_snis) AS codigo_snis,\\r\\n    TRIM(nombre) AS nombre,\\r\\n    TRIM(tipo) AS tipo,\\r\\n    TRIM(nivel_atencion) AS nivel_atencion,\\r\\n    TRIM(municipio) AS municipio,\\r\\n    TRIM(departamento) AS departamento,\\r\\n    TRIM(red_salud) AS red_salud,\\r\\n    TRIM(estado) AS estado\\r\\nFROM bronze.bja_establecimientos_salud\\r\\nWHERE establecimiento_id IS NOT NULL\\r\\nAND TRIM(establecimiento_id) <> \\'\\'',",
+				"     format: 'query') ~> source1",
+				"source1 derive(establecimiento_id = toInteger(establecimiento_id),",
+				"          codigo_snis = trim(codigo_snis),",
+				"          nombre = trim(nombre),",
+				"          tipo = case(  in(['Hospital','HOSPITAL','hospital'],trim(tipo)),'Hospital',  in(['Centro de Salud','CENTRO DE SALUD','centro de salud'],trim(tipo)),'Centro de Salud',  in(['Puesto de Salud','PUESTO DE SALUD','puesto de salud'],trim(tipo)),'Puesto de Salud',  trim(tipo)  ),",
+				"          nivel_atencion = case(  in(['Primer Nivel','PRIMER NIVEL','primer nivel'],trim(nivel_atencion)),'Primer Nivel',  in(['Segundo Nivel','SEGUNDO NIVEL','segundo nivel'],trim(nivel_atencion)),'Segundo Nivel',  in(['Tercer Nivel','TERCER NIVEL','tercer nivel'],trim(nivel_atencion)),'Tercer Nivel',  trim(nivel_atencion)  ),",
+				"          municipio = trim(municipio),",
+				"          departamento = case(\r",
+				"in(['LP'],trim(departamento)),'La Paz',\r",
+				"in(['CB'],trim(departamento)),'Cochabamba',\r",
+				"in(['SC'],trim(departamento)),'Santa Cruz',\r",
+				"in(['OR'],trim(departamento)),'Oruro',\r",
+				"in(['PT'],trim(departamento)),'Potosí',\r",
+				"in(['TJ'],trim(departamento)),'Tarija',\r",
+				"in(['CH'],trim(departamento)),'Chuquisaca',\r",
+				"in(['BN'],trim(departamento)),'Beni',\r",
+				"in(['PD'],trim(departamento)),'Pando',\r",
+				"trim(departamento)\r",
+				"),",
+				"          red_salud = trim(red_salud),",
+				"          estado = case(  in(['Activo','ACTIVO','activo'],trim(estado)),'Activo',  in(['Inactivo','INACTIVO','inactivo'],trim(estado)),'Inactivo',  trim(estado)  )) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          establecimiento_id as string,",
+				"          codigo_snis as string,",
+				"          nombre as string,",
+				"          tipo as string,",
+				"          nivel_atencion as string,",
+				"          municipio as string,",
+				"          departamento as string,",
+				"          red_salud as string,",
+				"          estado as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 			]
 		}
 	}

@@ -6,11 +6,67 @@
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
-			"sinks": [],
-			"transformations": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "bronze_bja_inscripciones",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "silver_bja_inscripciones",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				}
+			],
 			"scriptLines": [
-				""
+				"source(output(",
+				"          inscripcion_id as string,",
+				"          ci_beneficiaria as string,",
+				"          establecimiento_id as string,",
+				"          fecha_inscripcion as string,",
+				"          semana_gestacion as string,",
+				"          estado as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT\\n    TRIM(inscripcion_id) AS inscripcion_id,\\n    TRIM(ci_beneficiaria) AS ci_beneficiaria,\\n    TRIM(establecimiento_id) AS establecimiento_id,\\n    TRIM(fecha_inscripcion) AS fecha_inscripcion,\\n    TRIM(semana_gestacion) AS semana_gestacion,\\n    TRIM(estado) AS estado\\nFROM bronze.bja_inscripciones\\nWHERE inscripcion_id IS NOT NULL\\nAND TRIM(inscripcion_id) <> \\'\\'',",
+				"     format: 'query') ~> source1",
+				"source1 derive(inscripcion_id = trim(inscripcion_id),",
+				"          ci_beneficiaria = trim(ci_beneficiaria),",
+				"          establecimiento_id = toInteger(establecimiento_id),",
+				"          fecha_inscripcion = coalesce(     toDate(fecha_inscripcion,'yyyy-MM-dd'),     toDate(fecha_inscripcion,'dd/MM/yyyy'),     toDate(fecha_inscripcion,'MM-dd-yyyy'),     toDate(fecha_inscripcion,'yyyy/MM/dd') ),",
+				"          semana_gestacion = toInteger(semana_gestacion),",
+				"          estado = case(  in(['Activa','ACTIVA','activa'],trim(estado)),'Activa',  in(['Inactiva','INACTIVA','inactiva'],trim(estado)),'Inactiva',  trim(estado)  )) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          inscripcion_id as string,",
+				"          ci_beneficiaria as string,",
+				"          establecimiento_id as string,",
+				"          fecha_inscripcion as string,",
+				"          semana_gestacion as string,",
+				"          estado as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 			]
 		}
 	}
