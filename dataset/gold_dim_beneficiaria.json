@@ -1,0 +1,61 @@
+{
+	"name": "gold_dim_beneficiaria",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_segip",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "beneficiaria_key",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ci_normalizado",
+				"type": "varchar"
+			},
+			{
+				"name": "nombres",
+				"type": "varchar"
+			},
+			{
+				"name": "apellido_paterno",
+				"type": "varchar"
+			},
+			{
+				"name": "apellido_materno",
+				"type": "varchar"
+			},
+			{
+				"name": "fecha_nacimiento",
+				"type": "date"
+			},
+			{
+				"name": "genero",
+				"type": "varchar"
+			},
+			{
+				"name": "municipio_residencia",
+				"type": "varchar"
+			},
+			{
+				"name": "tiene_bja",
+				"type": "bit"
+			},
+			{
+				"name": "tiene_sup",
+				"type": "bit"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_beneficiaria"
+		}
+	}
+}
