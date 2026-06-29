@@ -109,7 +109,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "bja_controles_prenatales_csv",
+						"referenceName": "bronze_bja_controles_prenatales",
 						"type": "DatasetReference"
 					},
 					"name": "sink2"
@@ -123,7 +123,7 @@
 				},
 				{
 					"dataset": {
-						"referenceName": "bja_inscripciones_csv",
+						"referenceName": "bronze_bja_inscripciones",
 						"type": "DatasetReference"
 					},
 					"name": "sink4"
@@ -426,8 +426,14 @@
 				"          presion_arterial as string,",
 				"          resultado as string",
 				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
 				"     mapColumn(",
 				"          control_prenatal_id,",
 				"          ci_beneficiaria,",
@@ -481,8 +487,14 @@
 				"          semana_gestacion as string,",
 				"          estado as string",
 				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
 				"     mapColumn(",
 				"          inscripcion_id,",
 				"          ci_beneficiaria,",
