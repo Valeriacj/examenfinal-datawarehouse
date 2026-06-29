@@ -6,11 +6,76 @@
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
-			"sinks": [],
-			"transformations": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "bronze_sup_establecimientos",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "silver_sup_establecimientos",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				}
+			],
 			"scriptLines": [
-				""
+				"source(output(",
+				"          establecimiento_id as string,",
+				"          codigo_snis as string,",
+				"          nombre as string,",
+				"          tipo as string,",
+				"          nivel_atencion as string,",
+				"          municipio as string,",
+				"          departamento as string,",
+				"          red_salud as string,",
+				"          estado as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT\\n    TRIM(establecimiento_id) AS establecimiento_id,\\n    TRIM(codigo_snis) AS codigo_snis,\\n    TRIM(nombre) AS nombre,\\n    TRIM(tipo) AS tipo,\\n    TRIM(nivel_atencion) AS nivel_atencion,\\n    TRIM(municipio) AS municipio,\\n    TRIM(departamento) AS departamento,\\n    TRIM(red_salud) AS red_salud,\\n    TRIM(estado) AS estado\\nFROM bronze.sup_establecimientos\\nWHERE establecimiento_id IS NOT NULL\\nAND TRIM(establecimiento_id) <> \\'\\'',",
+				"     format: 'query') ~> source1",
+				"source1 derive(establecimiento_id = toInteger(establecimiento_id),",
+				"          codigo_snis = trim(codigo_snis),",
+				"          nombre = trim(nombre),",
+				"          tipo = trim(tipo),",
+				"          nivel_atencion = trim(nivel_atencion),",
+				"          municipio = trim(municipio),",
+				"          departamento = case( in(['LP'],trim(departamento)),'La Paz', in(['CB'],trim(departamento)),'Cochabamba', in(['SC'],trim(departamento)),'Santa Cruz', in(['OR'],trim(departamento)),'Oruro', in(['PT'],trim(departamento)),'Potosí', in(['TJ'],trim(departamento)),'Tarija', in(['CH'],trim(departamento)),'Chuquisaca', in(['BN'],trim(departamento)),'Beni', in(['PD'],trim(departamento)),'Pando', trim(departamento) ),",
+				"          red_salud = trim(red_salud),",
+				"          estado = trim(estado)) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          establecimiento_id as string,",
+				"          codigo_snis as string,",
+				"          nombre as string,",
+				"          tipo as string,",
+				"          nivel_atencion as string,",
+				"          municipio as string,",
+				"          departamento as string,",
+				"          red_salud as string,",
+				"          estado as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 			]
 		}
 	}
