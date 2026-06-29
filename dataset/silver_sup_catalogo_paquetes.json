@@ -1,0 +1,40 @@
+{
+	"name": "silver_sup_catalogo_paquetes",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "dw_segip",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "silver"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "paquete_id",
+				"type": "varchar"
+			},
+			{
+				"name": "nombre",
+				"type": "varchar"
+			},
+			{
+				"name": "contenido",
+				"type": "varchar"
+			},
+			{
+				"name": "peso_estandar_kg",
+				"type": "varchar"
+			},
+			{
+				"name": "costo_estimado_bs",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "silver",
+			"table": "sup_catalogo_paquetes"
+		}
+	}
+}
