@@ -6,11 +6,81 @@
 		},
 		"type": "MappingDataFlow",
 		"typeProperties": {
-			"sources": [],
-			"sinks": [],
-			"transformations": [],
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "silver_bja_pagos",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "silver_bja_pagos",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				}
+			],
 			"scriptLines": [
-				""
+				"source(output(",
+				"          pago_id as string,",
+				"          ci_beneficiaria as string,",
+				"          concepto_pago as string,",
+				"          monto_bs as string,",
+				"          fecha_pago as string,",
+				"          estado_pago as string,",
+				"          canal_pago as string,",
+				"          nro_comprobante as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: 'SELECT\\n    TRIM(pago_id) AS pago_id,\\n    TRIM(ci_beneficiaria) AS ci_beneficiaria,\\n    TRIM(concepto_pago) AS concepto_pago,\\n    TRIM(monto_bs) AS monto_bs,\\n    TRIM(fecha_pago) AS fecha_pago,\\n    TRIM(estado_pago) AS estado_pago,\\n    TRIM(canal_pago) AS canal_pago,\\n    TRIM(nro_comprobante) AS nro_comprobante\\nFROM bronze.bja_pagos\\nWHERE pago_id IS NOT NULL\\nAND TRIM(pago_id) <> \\'\\'',",
+				"     format: 'query') ~> source1",
+				"source1 derive(pago_id = trim(pago_id),",
+				"          ci_beneficiaria = trim(ci_beneficiaria),",
+				"          concepto_pago = case(  in(['Control Prenatal 1','CONTROL PRENATAL 1','control prenatal 1','cONTROL pRENATAL 1','CONTROL RPENATAL 1'],trim(concepto_pago)),'Control Prenatal 1',  in(['Control Prenatal 2','CONTROL PRENATAL 2','control prenatal 2','cONTROL pRENATAL 2'],trim(concepto_pago)),'Control Prenatal 2',  in(['Control Prenatal 3','CONTROL PRENATAL 3','control prenatal 3','cONTROL pRENATAL 3','Contorl Prenatal 3'],trim(concepto_pago)),'Control Prenatal 3',  in(['Control Prenatal 4','CONTROL PRENATAL 4','control prenatal 4','cONTROL pRENATAL 4','CONTROL PRENTAL 4'],trim(concepto_pago)),'Control Prenatal 4',  in(['Parto Institucional','Parto Istitucional','Parto Institcional'],trim(concepto_pago)),'Parto Institucional',  trim(concepto_pago)  ),",
+				"          monto_bs = toDecimal(iifNull(monto_bs,\"0.0\",monto_bs)),",
+				"          fecha_pago = coalesce( toDate(fecha_pago,'yyyy-MM-dd'), toDate(fecha_pago,'dd/MM/yyyy'), toDate(fecha_pago,'MM-dd-yyyy'), toDate(fecha_pago,'yyyy/MM/dd') ),",
+				"          estado_pago = case(\r",
+				"\r",
+				"in(['Pagado','PAGADO','pAGADO'],trim(estado_pago)),'Pagado',\r",
+				"\r",
+				"in(['Pendiente','PENDIENTE','pENDIENTE'],trim(estado_pago)),'Pendiente',\r",
+				"\r",
+				"trim(estado_pago)\r",
+				"\r",
+				"),",
+				"          canal_pago = case(  in(['Banco Unión','BANCO UNIÓN','banco unión','bANCO uNIÓN','Banco Unin','Banco UUnión'],trim(canal_pago)),'Banco Unión',  in(['Pago Móvil','PAGO MÓVIL','Pgo Móvil'],trim(canal_pago)),'Pago Móvil',  in(['Transferencia Bancaria','tRANSFERENCIA bANCARIA'],trim(canal_pago)),'Transferencia Bancaria',  isNull(canal_pago),'Sin registro',  trim(canal_pago)  ),",
+				"          nro_comprobante = trim(nro_comprobante)) ~> derivedColumn1",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          pago_id as string,",
+				"          ci_beneficiaria as string,",
+				"          concepto_pago as string,",
+				"          monto_bs as string,",
+				"          fecha_pago as string,",
+				"          estado_pago as string,",
+				"          canal_pago as string,",
+				"          nro_comprobante as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 			]
 		}
 	}
