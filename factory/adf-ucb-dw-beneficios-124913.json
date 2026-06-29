@@ -1,0 +1,10 @@
+{
+	"name": "adf-ucb-dw-beneficios-124913",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "centralus"
+}
